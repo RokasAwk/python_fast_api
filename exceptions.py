@@ -11,6 +11,8 @@ class ErrorCode(Enum):
     VALIDATION_ERROR = (422001, "VALIDATION_ERROR")
     USER_ALREADY_EXISTS = (409001, "USER_ALREADY_EXISTS")
     INVALID_AGE = (400001, "INVALID_AGE")
+    USERNAME_ALREADY_EXISTS = (409002, "USERNAME_ALREADY_EXISTS")
+    INVALID_CREDENTIALS = (401002, "INVALID_CREDENTIALS")
 
     def __init__(self, code_num: int, label: str):
         self.code_num = code_num
