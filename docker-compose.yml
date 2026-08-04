@@ -1,0 +1,35 @@
+services:
+    web:
+        build: . # 用當前資料夾的 Dockerfile 建置
+        container_name: fastapi_app
+        ports:
+            - '8000:8000' # 對齊 Dockerfile EXPOSE 與 uvicorn 監聽的 port
+        env_file:
+            - .env
+        volumes:
+            - .:/app # 掛載原始碼，搭配 --reload 做即時開發
+        command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+        depends_on:
+            db:
+                condition: service_healthy # 等 db 真正就緒後才啟動
+        restart: unless-stopped
+
+    db:
+        image: mysql:8
+        container_name: fastapi_mysql
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-my-secret-pw}
+            MYSQL_DATABASE: ${MYSQL_DATABASE:-mydb}
+        ports:
+            - '3306:3306' # 方便本機用 MySQL 工具連線除錯
+        volumes:
+            - mysql-data:/var/lib/mysql
+        healthcheck:
+            test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p${MYSQL_ROOT_PASSWORD:-my-secret-pw}']
+            interval: 10s
+            timeout: 5s
+            retries: 5
+        restart: unless-stopped
+
+volumes:
+    mysql-data:
