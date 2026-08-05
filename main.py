@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from api.auth.router import router as auth_router
 from api.home.router import router as home_router
 from api.users.router import router as users_router
+from api.orders.router import router as orders_router
 from auth import decode_access_token
 from database import Base, engine
 from exceptions import APIException, ErrorCode, api_exception_handler, validation_exception_handler
@@ -22,6 +23,7 @@ description = """
 
 app = FastAPI(title= "FastAPI Test", version="1.0.0", description= description)
 
+# 不需要帶token的路徑
 PUBLIC_PATHS = {"/", "/docs", "/redoc", "/openapi.json", "/auth/register", "/auth/login"}
 
 # middleware 的本質是「攔截所有請求/回應」，本身是「所有請求都會經過的攔截層」，用途很廣，驗證只是常見的其中一種。
@@ -66,6 +68,7 @@ app.add_middleware(
 app.include_router(home_router)
 app.include_router(auth_router)
 app.include_router(users_router)
+app.include_router(orders_router)
 
 app.add_exception_handler(APIException, api_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
