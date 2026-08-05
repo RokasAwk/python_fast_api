@@ -19,7 +19,7 @@ def get_account_by_id(db: Session, account_id: int) -> AccountORM | None:
 def create_account(db: Session, username: str, password: str) -> AccountModel:
     account = AccountORM(username=username, hashed_password=hash_password(password))
     db.add(account)
-    db.commit()
+    db.commit() # 對資料庫做修改，最後要再補一行 db.commit() 才會生效
     db.refresh(account)
     return _to_model(account)
 
