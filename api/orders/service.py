@@ -40,3 +40,9 @@ def create_order(db: Session, orderItem: CreateOrderRequest) -> OrderModel:
     db.commit()
     db.refresh(order)
     return _to_model(order)
+
+def get_user_orders(db: Session, userId: int) -> list[OrderModel]:
+  
+    orders = db.query(OrderORM).filter(OrderORM.userId == userId).all()
+
+    return [_to_model(order) for order in orders]
