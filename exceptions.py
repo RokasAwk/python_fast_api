@@ -11,6 +11,8 @@ class ErrorCode(Enum):
     UNAUTHORIZED = (401001, "UNAUTHORIZED")
     INVALID_CREDENTIALS = (401002, "INVALID_CREDENTIALS")
 
+    FORBIDDEN = (403001, "FORBIDDEN")
+
     USER_NOT_FOUND = (404001, "USER_NOT_FOUND")
 
     USER_ALREADY_EXISTS = (409001, "USER_ALREADY_EXISTS")
@@ -29,6 +31,16 @@ class APIException(Exception):
         self.status_code = status_code
         self.code = code
         self.message = message
+
+
+class Unauthorized(APIException):
+    def __init__(self, message: str = "Access Token 無效或未提供"):
+        super().__init__(401, ErrorCode.UNAUTHORIZED, message)
+
+
+class Forbidden(APIException):
+    def __init__(self, message: str = "無權存取此資源"):
+        super().__init__(403, ErrorCode.FORBIDDEN, message)
 
 
 async def api_exception_handler(request: Request, exc: APIException):

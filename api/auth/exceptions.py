@@ -9,8 +9,3 @@ class UsernameAlreadyExists(APIException):
 class InvalidCredentials(APIException):
     def __init__(self):
         super().__init__(401, ErrorCode.INVALID_CREDENTIALS, "帳號或密碼錯誤")
-
-
-class Unauthorized(APIException):
-    def __init__(self):
-        super().__init__(401, ErrorCode.UNAUTHORIZED, "Access Token 無效或未提供")

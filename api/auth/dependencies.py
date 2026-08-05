@@ -5,8 +5,8 @@ from sqlalchemy.orm import Session
 from auth import decode_access_token
 from config import security
 from database import get_db
+from exceptions import Unauthorized
 from . import service
-from .exceptions import Unauthorized
 from .models import AccountModel
 
 
