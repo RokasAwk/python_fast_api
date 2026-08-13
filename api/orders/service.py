@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 
+from api.auth.models import AccountORM
 from .models import OrderModel, OrderORM
 from .schemas import CreateOrderRequest
 
@@ -43,8 +44,9 @@ def create_order(db: Session, orderItem: CreateOrderRequest) -> OrderModel:
     return _to_model(order)
 
 def get_user_orders(db: Session, userId: int) -> list[OrderModel]:
-  
-    orders = db.query(OrderORM).filter(OrderORM.userId == userId).all()
+
+    account = db.query(AccountORM).filter(AccountORM.id == userId).first()
+    orders = account.orders if account is not None else []
 
     return [_to_model(order) for order in orders]
 

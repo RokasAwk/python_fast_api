@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from sqlalchemy import Column, DateTime, Integer, String, func
+from sqlalchemy.orm import relationship
 
 from database import Base
 
@@ -18,3 +19,5 @@ class AccountORM(Base):
     username = Column(String(50), nullable=False, unique=True, index=True)
     hashed_password = Column(String(255), nullable=False)
     created_at = Column(DateTime, server_default=func.now())
+
+    orders = relationship("OrderORM", back_populates="account")

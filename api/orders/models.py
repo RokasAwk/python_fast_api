@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Integer, String, func
+from sqlalchemy import Column, DateTime, ForeignKey, Integer, String, func
+from sqlalchemy.orm import relationship
 
 from database import Base
 
@@ -22,10 +23,12 @@ class OrderORM(Base):
     __tablename__ = "orders"
 
     id = Column(Integer, primary_key=True, index=True)
-    userId = Column(Integer, ForeignKey("users.id"))
+    userId = Column(Integer, ForeignKey("accounts.id"), nullable=False)
     itemType = Column(Integer, nullable=False)
     itemTypeDisplayName = Column(String(50), nullable=False)
     itemName = Column(String(100), nullable=False)
     itemVolume = Column(Integer, nullable=False, default=0)
     status = Column(Integer, nullable=False, default=0)
     createdTime = Column(DateTime, server_default=func.now())
+
+    account = relationship("AccountORM", back_populates="orders")
