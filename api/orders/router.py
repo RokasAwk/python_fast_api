@@ -7,8 +7,8 @@ from config import security
 from database import get_db
 from exceptions import Forbidden
 from . import service
-from .exceptions import ItemVolumeInValidExists
-from .schemas import CreateOrderResponse, CreateOrderRequest, GetUserOrdersResponse
+from .exceptions import ItemVolumeInValidExists, OrderNotFound
+from .schemas import CreateOrderResponse, CreateOrderRequest, GetUserOrdersResponse, GetUserSingleOrderResponse
 
 
 router = APIRouter(prefix="/order", tags=["Order"], dependencies=[Security(security)])
@@ -41,6 +41,7 @@ def createOrder(
         "item_type_display_name": account.itemTypeDisplayName,
         "item_name": account.itemName,
         "item_volume": account.itemVolume,
+        "created_time": int(account.createdTime.timestamp()),
         "status": account.status,
     }
 
@@ -51,7 +52,7 @@ def createOrder(
     description="利用 user id 查詢該使用者的所有訂單。",
 )
 
-def getOrders(
+def getUserOrders(
     user_id: int,
     db: Session = Depends(get_db),
     current_account: AccountModel = Depends(get_current_account),
@@ -59,7 +60,7 @@ def getOrders(
     if user_id != current_account.id:
         raise Forbidden("無權存取其他使用者的訂單")
 
-    orders = service.get_orders(db, user_id)
+    orders = service.get_user_orders(db, user_id)
 
     return {
         "message": "Success",
@@ -71,8 +72,39 @@ def getOrders(
                 "item_type_display_name": order.itemTypeDisplayName,
                 "item_name": order.itemName,
                 "item_volume": order.itemVolume,
+                "created_time": int(order.createdTime.timestamp()),
                 "status": order.status,
             }
             for order in orders
         ],
+    }
+
+@router.post(
+    "/{order_id:int}",
+    response_model=GetUserSingleOrderResponse,
+    summary="查詢單筆訂單",
+    description="利用 order id 查詢該筆訂單，並且檢查 order id 是否為使用者本人的訂單。",
+)
+
+def getSingleOrder(
+    order_id: int,
+    db: Session = Depends(get_db),
+    current_account: AccountModel = Depends(get_current_account),
+):
+    order = service.get_user_single_order(db, current_account.id, order_id)
+    if order is None:
+        raise OrderNotFound()
+
+    return {
+        "message": "Success",
+        "order": {
+            "order_id": order.id,
+            "user_id": order.userId,
+            "item_type": order.itemType,
+            "item_type_display_name": order.itemTypeDisplayName,
+            "item_name": order.itemName,
+            "item_volume": order.itemVolume,
+            "created_time": int(order.createdTime.timestamp()),
+            "status": order.status,
+        }
     }

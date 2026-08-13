@@ -7,7 +7,7 @@ class RegisterRequest(BaseModel):
 
     model_config = {
         "json_schema_extra": {
-            "example": {"username": "alice", "password": "s3cret123"}
+            "example": {"username": "rokas", "password": "s3cret123"}
         }
     }
 
@@ -19,7 +19,7 @@ class RegisterResponse(BaseModel):
 
     model_config = {
         "json_schema_extra": {
-            "example": {"message": "Success", "id": 1, "username": "alice"}
+            "example": {"message": "Success", "id": 1, "username": "rokas"}
         }
     }
 
@@ -30,7 +30,7 @@ class LoginRequest(BaseModel):
 
     model_config = {
         "json_schema_extra": {
-            "example": {"username": "alice", "password": "s3cret123"}
+            "example": {"username": "rokas", "password": "s3cret123"}
         }
     }
 
@@ -52,6 +52,6 @@ class MeResponse(BaseModel):
 
     model_config = {
         "json_schema_extra": {
-            "example": {"id": 1, "username": "alice"}
+            "example": {"id": 1, "username": "rokas"}
         }
     }

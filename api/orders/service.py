@@ -25,6 +25,7 @@ def _to_model(order: OrderORM) -> OrderModel:
         itemName=order.itemName,
         itemVolume=order.itemVolume,
         status=order.status,
+        createdTime=order.createdTime,
     )
 
 
@@ -46,3 +47,9 @@ def get_user_orders(db: Session, userId: int) -> list[OrderModel]:
     orders = db.query(OrderORM).filter(OrderORM.userId == userId).all()
 
     return [_to_model(order) for order in orders]
+
+def get_user_single_order(db: Session, userId: int, orderId: int) -> OrderModel | None:
+
+    order = db.query(OrderORM).filter(OrderORM.userId == userId, OrderORM.id == orderId).first()
+
+    return _to_model(order) if order is not None else None

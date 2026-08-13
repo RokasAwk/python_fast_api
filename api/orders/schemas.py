@@ -8,6 +8,7 @@ class OrderItem(BaseModel):
     item_type_display_name: str
     item_name: str
     item_volume: int
+    created_time: int
     status: int # 0: 已成立 1: 已確認 2: 揀貨中 3: 出貨中 4: 運送中 5: 已完成 6: 取消 7: 異常
 
 class CreateOrderResponse(BaseModel):
@@ -18,18 +19,20 @@ class CreateOrderResponse(BaseModel):
     item_type_display_name: str
     item_name: str
     item_volume: int
+    created_time: int
     status: int # 0: 已成立 1: 已確認 2: 揀貨中 3: 出貨中 4: 運送中 5: 已完成 6: 取消 7: 異常
 
     model_config = {
         "json_schema_extra": {
             "example": {
                 "message": "Success",
-                "order_id": 100001,
+                "order_id": 1,
                 "user_id": 1,
                 "item_type": 1,
                 "item_type_display_name": "食品",
                 "item_name": "泡麵",
                 "item_volume": 10,
+                "created_time": 0,
                 "status": 0
             }
         }
@@ -62,7 +65,7 @@ class GetUserOrdersResponse(BaseModel):
                 "message": "Success",
                 "orders": [
                     {
-                        "order_id": 100001,
+                        "order_id": 1,
                         "user_id": 1,
                         "item_type": 1,
                         "item_type_display_name": "食品",
@@ -71,7 +74,7 @@ class GetUserOrdersResponse(BaseModel):
                         "status": 0
                     },
                     {
-                        "order_id": 100002,
+                        "order_id": 2,
                         "user_id": 1,
                         "item_type": 1,
                         "item_type_display_name": "食品",
@@ -80,6 +83,29 @@ class GetUserOrdersResponse(BaseModel):
                         "status": 0
                     }
                 ]
+            }
+        }
+    }
+
+
+class GetUserSingleOrderResponse(BaseModel):
+    message: str
+    order: OrderItem
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "message": "Success",
+                "order": {
+                    "order_id": 1,
+                    "user_id": 1,
+                    "item_type": 1,
+                    "item_type_display_name": "食品",
+                    "item_name": "泡麵",
+                    "item_volume": 10,
+                    "created_time": 0, 
+                    "status": 0,
+                },
             }
         }
     }
