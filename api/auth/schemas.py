@@ -55,3 +55,15 @@ class MeResponse(BaseModel):
             "example": {"id": 1, "username": "rokas"}
         }
     }
+
+class GetAllUserResponse(BaseModel):
+    users: list[MeResponse]
+
+    model_config = {
+        "json_schema_extra": {
+            "example": [
+                {"id": 1, "username": "rokas"},
+                {"id": 2, "username": "riku"}
+            ]
+        }
+    }

@@ -29,3 +29,7 @@ def authenticate(db: Session, username: str, password: str) -> AccountORM | None
     if account is None or not verify_password(password, account.hashed_password):
         return None
     return account
+
+def get_all_users(db: Session) -> list[AccountModel]:
+    users = db.query(AccountORM).all()
+    return [_to_model(user) for user in users]

@@ -7,7 +7,7 @@ from . import service
 from .dependencies import get_current_account
 from .exceptions import InvalidCredentials, UsernameAlreadyExists
 from .models import AccountModel
-from .schemas import LoginRequest, MeResponse, RegisterRequest, RegisterResponse, TokenResponse
+from .schemas import LoginRequest, MeResponse, RegisterRequest, RegisterResponse, TokenResponse, GetAllUserResponse
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -52,3 +52,15 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
 )
 def me(current_account: AccountModel = Depends(get_current_account)):
     return {"id": current_account.id, "username": current_account.username}
+
+@router.get(
+    "/all",
+    response_model=GetAllUserResponse,
+    operation_id="get_users",
+    summary="取得所有帳號",
+    description="查詢所有帳號",
+)
+def get_users(db: Session = Depends(get_db)):
+    users = service.get_all_users(db)
+
+    return {"users": users}
