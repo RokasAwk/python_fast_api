@@ -9,10 +9,14 @@ from api.auth.router import router as auth_router
 from api.home.router import router as home_router
 from api.users.router import router as users_router
 from api.orders.router import router as orders_router
+from api.ws.router import router as ws_router
 from auth import decode_access_token
 from database import Base, engine
 from exceptions import APIException, ErrorCode, api_exception_handler, validation_exception_handler
 
+# fastapi dev main.py 
+# 它會啟動一個由 Uvicorn 驅動的伺服器，並且預設開啟 auto-reload 功能，也就是當你修改並儲存 main.py 檔案時，伺服器會自動重啟載入最新的程式碼，非常方便。
+# ---------------------------------------------
 # 啟動時確保資料表存在（auth/users router 的 import chain 已經讓 AccountORM、UserORM 註冊到 Base.metadata）
 Base.metadata.create_all(bind=engine)
 
@@ -24,7 +28,7 @@ description = """
 app = FastAPI(title= "FastAPI Test", version="1.0.0", description= description)
 
 # 不需要帶token的路徑
-PUBLIC_PATHS = {"/", "/docs", "/redoc", "/openapi.json", "/auth/register", "/auth/login"}
+PUBLIC_PATHS = {"/", "/docs", "/redoc", "/openapi.json", "/auth/register", "/auth/login", "/auth/all"}
 
 # middleware 的本質是「攔截所有請求/回應」，本身是「所有請求都會經過的攔截層」，用途很廣，驗證只是常見的其中一種。
 @app.middleware("http")
@@ -69,6 +73,7 @@ app.include_router(home_router)
 app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(orders_router)
+app.include_router(ws_router)
 
 app.add_exception_handler(APIException, api_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
