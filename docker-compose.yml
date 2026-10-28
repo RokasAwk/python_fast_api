@@ -9,9 +9,40 @@ services:
         volumes:
             - .:/app # 掛載原始碼，搭配 --reload 做即時開發
         command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+        environment:
+            REDIS_URL: redis://redis:6379/0
         depends_on:
             db:
                 condition: service_healthy # 等 db 真正就緒後才啟動
+            redis:
+                condition: service_healthy
+        restart: unless-stopped
+
+    worker:
+        build: . # 跟 web 用同一個 image，只是換啟動指令
+        container_name: fastapi_celery_worker
+        env_file:
+            - .env
+        environment:
+            REDIS_URL: redis://redis:6379/0
+        volumes:
+            - .:/app
+        command: celery -A api.redis_task.tasks worker --pool=eventlet --loglevel=info
+        depends_on:
+            redis:
+                condition: service_healthy
+        restart: unless-stopped
+
+    redis:
+        image: redis:7-alpine
+        container_name: fastapi_redis
+        ports:
+            - '6380:6379' # host 6379 被別的 container 佔用，改用 6380 避免衝突
+        healthcheck:
+            test: ['CMD', 'redis-cli', 'ping']
+            interval: 10s
+            timeout: 5s
+            retries: 5
         restart: unless-stopped
 
     db:

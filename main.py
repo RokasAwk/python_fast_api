@@ -10,6 +10,7 @@ from api.home.router import router as home_router
 from api.users.router import router as users_router
 from api.orders.router import router as orders_router
 from api.ws.router import router as ws_router
+from api.redis_task.router import router as redis_task_router
 from auth import decode_access_token
 from database import Base, engine
 from exceptions import APIException, ErrorCode, api_exception_handler, validation_exception_handler
@@ -74,6 +75,7 @@ app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(orders_router)
 app.include_router(ws_router)
+app.include_router(redis_task_router)
 
 app.add_exception_handler(APIException, api_exception_handler)
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
