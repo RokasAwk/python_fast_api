@@ -12,8 +12,10 @@ class Settings(BaseSettings):
     mysql_host: str = "db"
     mysql_port: int = 3306
     mysql_user: str = "root"
-    mysql_password: str = "my-secret-pw"
+    mysql_password: str
     mysql_database: str = "mydb"
+
+    redis_url: str = "redis://localhost:6379/0"
 
     @property
     def database_url(self) -> str:
